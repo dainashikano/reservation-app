@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
 import { ProductService } from '../shared/product.service';
+import { tap, catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'app-product-listings',
@@ -13,14 +15,15 @@ export class ProductListComponent {
   constructor(private productService: ProductService) {}
 
   ngOnInit() {
-    const productObservable = this.productService.getProducts();
-    productObservable.subscribe(
-      (data) => { 
+    const productObservable = this.productService.getProducts().pipe(
+      tap((data) => {
         this.products = data
-      },
-      (err) => { 
-        console.error('something wrong occurred: ' + err); 
-      }
+      }),
+      catchError((error) => {
+        console.error('something wrong occurred: ' + error); 
+                  return of(null)
+      })
     )
+    .subscribe();
   }
 }
