@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
-import { Product, products } from '../../product';
 import { ActivatedRoute } from '@angular/router';
+import { ProductService } from '../shared/product.service';
+import { tap, catchError } from 'rxjs/operators';
+import { of } from 'rxjs';
 
 @Component({
   selector: 'app-product-detail',
@@ -9,15 +11,26 @@ import { ActivatedRoute } from '@angular/router';
   styleUrl: './product-detail.component.scss'
 })
 export class ProductDetailComponent {
-  product: Product | undefined;
-  constructor(private route: ActivatedRoute) {}
+  product: any;
+  constructor(
+    private route: ActivatedRoute,
+    private productService: ProductService
+  ) {}
 
   ngOnInit() {
-    const routeParams = this.route.snapshot.paramMap;
-    const productIdFromRoute = Number(routeParams.get('productId'));
-
-    this.product = products.find(
-      (product) => product.id === productIdFromRoute
-    )
+    this.route.paramMap.subscribe(params => {
+      // this.product = this.productService.getProductById(params.get('productId')!)
+      const productObservable = this.productService.getProductById(params.get('productId')!)
+      .pipe(
+        tap((data) => {
+          this.product = data;
+        }),
+        catchError((error) => {
+          console.error('something wrong occurred: ' + error); 
+          return of(null)
+        })
+      )
+      .subscribe();
+    })
   }
 }
