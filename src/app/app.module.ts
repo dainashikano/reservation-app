@@ -7,6 +7,7 @@ import { NavbarComponent } from './common/navbar/navbar.component';
 import { ProductListComponent } from './product/product-listings/product-listings.component';
 import { ProductDetailComponent } from './product/product-detail/product-detail.component';
 import { ProductComponent } from './product/product.component';
+import { provideHttpClient, withFetch  } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -18,7 +19,8 @@ import { ProductComponent } from './product/product.component';
     AppRoutingModule
   ],
   providers: [
-    provideClientHydration(withEventReplay())
+    provideClientHydration(withEventReplay()),
+    provideHttpClient(withFetch())
   ],
   bootstrap: [AppComponent]
 })
