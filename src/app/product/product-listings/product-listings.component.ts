@@ -20,7 +20,6 @@ export class ProductListComponent {
         this.products = data
       }),
       catchError((error) => {
-        console.error('something wrong occurred: ' + error); 
                   return of(null)
       })
     )
